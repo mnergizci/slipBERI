@@ -16,11 +16,9 @@
 %
 % R.M.J.Amey 2018
 
-
-
 %% Load data, if you need to
 
-fontsize_plot = 32;
+fontsize_plot = 15;
 set(0,'DefaultAxesFontSize',fontsize_plot)
 set(0,'defaultAxesFontName', 'Times New Roman')
 
@@ -88,9 +86,9 @@ if strcmp(invert.inversion_type, 'bayesian') == 1
 %             invert.solve_for_InSAR_offset = 'no';
 %         end
 
-        if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
-            visual_slip_mean = reshape(patch_mean, total_n_down_dip_patches, total_n_along_strike_patches);
-        end
+%         if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
+%             visual_slip_mean = reshape(patch_mean, total_n_down_dip_patches, total_n_along_strike_patches);
+%         end
 
         % Find median
 %         if strcmp(invert.solve_for_fault_size, 'yes') == 1
@@ -108,9 +106,9 @@ if strcmp(invert.inversion_type, 'bayesian') == 1
         %end
         
         
-        if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
-            visual_slip_median = reshape(patch_median, total_n_down_dip_patches, total_n_along_strike_patches);
-        end
+%         if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
+%             visual_slip_median = reshape(patch_median, total_n_down_dip_patches, total_n_along_strike_patches);
+%         end
 
         % Find mode
          nbins = 30;
@@ -141,9 +139,9 @@ if strcmp(invert.inversion_type, 'bayesian') == 1
             rake_mode(i,1) = Yedges(I_col);
         end
         
-        if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
-            visual_slip_mode = reshape(patch_mode, total_n_down_dip_patches, total_n_along_strike_patches);
-        end 
+%         if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
+%             visual_slip_mode = reshape(patch_mode, total_n_down_dip_patches, total_n_along_strike_patches);
+%         end 
 
         % Find std
         if strcmp(invert.solve_for_fault_size, 'yes') == 1
@@ -157,9 +155,9 @@ if strcmp(invert.inversion_type, 'bayesian') == 1
             rake_std = std(rake_keep.');
             patch_std = std(slip_keep.'); % calculates standard deviation of each column of slip_keep
         end
-        if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
-            visual_std = reshape(patch_std, total_n_down_dip_patches, total_n_along_strike_patches);
-        end
+%         if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
+%             visual_std = reshape(patch_std, total_n_down_dip_patches, total_n_along_strike_patches);
+%         end
         %std_scaling = (1./visual_std)./(max(1./patch_std));
         std_scaling = ones(total_n_down_dip_patches, total_n_along_strike_patches);
 
@@ -198,9 +196,9 @@ if strcmp(invert.inversion_type, 'bayesian') == 1
             alpha2_mostlikely = alpha2_keep(1:n_fault_strands_for_smoothing,I);
         end
         rake_mostlikely = rake_keep(:,I);
-        if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
-            visual_patch_MAP = reshape(patch_MAP, total_n_down_dip_patches, total_n_along_strike_patches);
-        end
+%         if strcmp(variable_patches_along_strike_with_depth, 'no') == 1
+%             visual_patch_MAP = reshape(patch_MAP, total_n_down_dip_patches, total_n_along_strike_patches);
+%         end
         %WRMS_mostlikely = logL_keep(:,I);
 
 
@@ -380,426 +378,425 @@ end
 % %ylabel('Slip (meters)');
 
 %% If in testing mode, plot 95% conf with true value
-
-% see whether the true values in testing mode plot with in the 95%
-if strcmp(testing.testing_mode, 'yes') && strcmp(invert.smoothing, 'tikhonov') == 0
-   
-    plot_numbers = 1: total_n_slip_patches;
-    
-%     % if you want to plot patches 1:end in ROWS instead of columns
-%     % (default) then uncomment this
-     A = 1: total_n_slip_patches;
-     A = reshape(A, total_n_down_dip_patches, n_along_strike_patches);
-     A = fliplr(A);
-     A = A';
-     plot_numbers = reshape(A, total_n_slip_patches, 1);
+% 
+% % see whether the true values in testing mode plot with in the 95%
+% if strcmp(testing.testing_mode, 'yes') && strcmp(invert.smoothing, 'tikhonov') == 0
+%    
+%     plot_numbers = 1: total_n_slip_patches;
+%     
+% %     % if you want to plot patches 1:end in ROWS instead of columns
+% %     % (default) then uncomment this
 %      A = 1: total_n_slip_patches;
-%      A = reshape(A, total_n_down_dip_patches, total_n_along_strike_patches);
-%       A = A';    
-%       B=flipud(A);
-%     %A = fliplr(A);
+%      A = reshape(A, total_n_down_dip_patches, n_along_strike_patches);
+%      A = fliplr(A);
 %      A = A';
-%     A = flipud(A);
-%     A = A';
-%     plot_numbers = reshape(B, total_n_slip_patches, 1);
-%     %plot_numbers2 = reshape(A, total_n_slip_patches, 1);
-
-     %plot_numbers2 = reshape(flipud(A), total_n_slip_patches, 1);
-    
-    plot_numbers2 = plot_numbers;
-
-    figure('position', [100, 300, 1800, 1000])
-    hold all
-    %plot( 1:100, patch_conf_intervals(plot_numbers,:), 'LineWidth', 1.5);
-    X = [1:total_n_slip_patches; 1:total_n_slip_patches];
-    Y = [patch_conf_intervals(plot_numbers,1), patch_conf_intervals(plot_numbers,2)]';
-    plot( X, Y, 'r', 'LineWidth', 1.5);
-    hold on;
-    %scatter( 1:total_n_slip_patches, patch_mode(plot_numbers), 30, 'k', 'filled');
-    scatter( 1:total_n_slip_patches, patch_mean(plot_numbers), 30, 'k', 'filled');
-    xlabel('Patch number (Along strike)')
-    ylabel('Slip (m)')
-    title('95% confidence')
-     
-    if strcmp(testing.testing_mode, 'yes') == 1
-       
-        % true value
-        load(testing.making_model, 'synthetic_slip');
-        
-        % how to find which patch number it is if the model and solution have a different number of slip patches?
-        
-
-%         if length(synthetic_slip) ~= length(patch_mode);
-%             disp('I don''t have a better way of doing this yet');
-%             prompt = 'Type the number slip patch that each true slip patch equates to on your own fault as a matrix';
-%         truepatchplot_numbers = input(prompt);
-%         else
-            truepatchplot_numbers = 1 :length(synthetic_slip);
-%         end
+%      plot_numbers = reshape(A, total_n_slip_patches, 1);
+% %      A = 1: total_n_slip_patches;
+% %      A = reshape(A, total_n_down_dip_patches, total_n_along_strike_patches);
+% %       A = A';    
+% %       B=flipud(A);
+% %     %A = fliplr(A);
+% %      A = A';
+% %     A = flipud(A);
+% %     A = A';
+% %     plot_numbers = reshape(B, total_n_slip_patches, 1);
+% %     %plot_numbers2 = reshape(A, total_n_slip_patches, 1);
+% 
+%      %plot_numbers2 = reshape(flipud(A), total_n_slip_patches, 1);
+%     
+%     plot_numbers2 = plot_numbers;
+% 
+%     figure('position', [100, 300, 1800, 1000])
+%     hold all
+%     %plot( 1:100, patch_conf_intervals(plot_numbers,:), 'LineWidth', 1.5);
+%     X = [1:total_n_slip_patches; 1:total_n_slip_patches];
+%     Y = [patch_conf_intervals(plot_numbers,1), patch_conf_intervals(plot_numbers,2)]';
+%     plot( X, Y, 'r', 'LineWidth', 1.5);
+%     hold on;
+%     %scatter( 1:total_n_slip_patches, patch_mode(plot_numbers), 30, 'k', 'filled');
+%     scatter( 1:total_n_slip_patches, patch_mean(plot_numbers), 30, 'k', 'filled');
+%     xlabel('Patch number (Along strike)')
+%     ylabel('Slip (m)')
+%     title('95% confidence')
+%      
+%     if strcmp(testing.testing_mode, 'yes') == 1
+%        
+%         % true value
+%         load(testing.making_model, 'synthetic_slip');
 %         
-%         % plot on top in blue
-         scatter( truepatchplot_numbers, synthetic_slip(plot_numbers2), 200, 'gx', 'LineWidth', 3);
-        
-    end
-     
-%     legend('95% conf high', '95% conf low', 'Mode', 'True value')
-%     legend('95% conf high', 'Mode', 'True value')
-    
-    % add dotty lines to separate rows
-    %betweenrows =(total_n_along_strike_patches:total_n_along_strike_patches:total_n_slip_patches)+0.5;      % this was back when n_along_strike_patches was one value, intead of one value per row
-    betweenrows = total_n_along_strike_patches +0.5;
-    %Y = [0 ceil(max(max(patch_conf_intervals)))];
-    Y = [0 6];
-    Y = repmat(Y', 1, (total_n_down_dip_patches(1)));
-    %X = [betweenrows ; betweenrows];
-    %plot(X,Y, '--b');
-    
-    for i = 1 : total_n_down_dip_patches-1               % do the loop to plot all the dotty lines between allh te rows
-        X = [betweenrows + (total_n_along_strike_patches*(i-1)); betweenrows+ (total_n_along_strike_patches*(i-1))];
-        plot(X,Y, '--b');
-    end
-    
-    
-    xlim([0 total_n_slip_patches])
-    
-    for i = 1 : total_n_down_dip_patches
-        x1 = (total_n_along_strike_patches/2)+(total_n_along_strike_patches*(i-1))-2;
-        y1 = 2.5;
-        txt1 = ['Row ', num2str(i)];
-        %text(x1,y1,txt1, 'Fontsize', 22)
-    end
-    
-    if strcmp(testing.testing_mode, 'yes') == 1
-        legend('95% conf', 'Patch mode', 'True value')
-    else
-        legend('95% conf', 'Patch mode')
-    end
-    
-    ylim([0 6])
-    
-end
+%         % how to find which patch number it is if the model and solution have a different number of slip patches?
+%         
+% 
+% %         if length(synthetic_slip) ~= length(patch_mode);
+% %             disp('I don''t have a better way of doing this yet');
+% %             prompt = 'Type the number slip patch that each true slip patch equates to on your own fault as a matrix';
+% %         truepatchplot_numbers = input(prompt);
+% %         else
+%             truepatchplot_numbers = 1 :length(synthetic_slip);
+% %         end
+% %         
+% %         % plot on top in blue
+%          scatter( truepatchplot_numbers, synthetic_slip(plot_numbers2), 200, 'gx', 'LineWidth', 3);
+%         
+%     end
+%      
+% %     legend('95% conf high', '95% conf low', 'Mode', 'True value')
+% %     legend('95% conf high', 'Mode', 'True value')
+%     
+%     % add dotty lines to separate rows
+%     %betweenrows =(total_n_along_strike_patches:total_n_along_strike_patches:total_n_slip_patches)+0.5;      % this was back when n_along_strike_patches was one value, intead of one value per row
+%     betweenrows = total_n_along_strike_patches +0.5;
+%     %Y = [0 ceil(max(max(patch_conf_intervals)))];
+%     Y = [0 6];
+%     Y = repmat(Y', 1, (total_n_down_dip_patches(1)));
+%     %X = [betweenrows ; betweenrows];
+%     %plot(X,Y, '--b');
+%     
+%     for i = 1 : total_n_down_dip_patches-1               % do the loop to plot all the dotty lines between allh te rows
+%         X = [betweenrows + (total_n_along_strike_patches*(i-1)); betweenrows+ (total_n_along_strike_patches*(i-1))];
+%         plot(X,Y, '--b');
+%     end
+%     
+%     
+%     xlim([0 total_n_slip_patches])
+%     
+%     for i = 1 : total_n_down_dip_patches
+%         x1 = (total_n_along_strike_patches/2)+(total_n_along_strike_patches*(i-1))-2;
+%         y1 = 2.5;
+%         txt1 = ['Row ', num2str(i)];
+%         %text(x1,y1,txt1, 'Fontsize', 22)
+%     end
+%     
+%     if strcmp(testing.testing_mode, 'yes') == 1
+%         legend('95% conf', 'Patch mode', 'True value')
+%     else
+%         legend('95% conf', 'Patch mode')
+%     end
+%     
+%     ylim([0 6])
+%     
+% end
 
 %% Plot the result, mean, flat
-
-if strcmp(display.plotmean, 'yes') + strcmp(display.plotmode, 'yes') + strcmp(display.plotmedian, 'yes') ~=0
-
-scaling_factor = 0.5;
-
-if strcmp(variable_patches_along_strike_with_depth, 'no') == 1;         % can't plot using imagesc if there are a different number of patches along strike
-
-    
-            order = flipud(spatial_model1);
-            order = reshape(order, 1, []);
-            order = order';
-    
-    
-        things_to_get_around_to_plotting = {};
-        visual_things_to_get_around_to_plotting = {};
-        rake_to_get_around_to_plotting ={};
-        if strcmp(display.plotmean, 'yes') == 1;
-             things_to_get_around_to_plotting = {'patch_mean'};
-             visual_things_to_get_around_to_plotting = {'visual_slip_mean'};
-             rake_to_get_around_to_plotting = {'rake_mean'};
-        end
-        if strcmp(display.plotmode, 'yes') == 1;
-            things_to_get_around_to_plotting{end+1,1} = {'patch_mode'};
-            visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_slip_mode'};
-            rake_to_get_around_to_plotting{end+1,1} = {'rake_mode'};
-        end
-        if strcmp(display.plotmedian, 'yes') == 1;
-            things_to_get_around_to_plotting{end+1,1} = {'patch_median'};
-            visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_slip_median'};
-            rake_to_get_around_to_plotting{end+1,1} = { 'rake_median'};
-        end
-        if strcmp(display.plotMAP, 'yes') == 1;
-            things_to_get_around_to_plotting{end+1,1} = {'patch_MAP'};
-            visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_patch_MAP'};
-            rake_to_get_around_to_plotting{end+1,1} = {'rake_mostlikely'};
-        end        
-
-    
-        for i = 1: size(visual_things_to_get_around_to_plotting,1)     % loop through all the things we're plotting
-        
-                thing_plotting_atm = things_to_get_around_to_plotting{i};
-                visual_thing_plotting_atm = visual_things_to_get_around_to_plotting{i};
-                rake_plotting_atm = rake_to_get_around_to_plotting{i};
-
-                if iscell(visual_thing_plotting_atm)
-                    visual_thing_plotting_atm = cell2mat(visual_thing_plotting_atm);
-                end
-                if iscell(thing_plotting_atm)
-                    thing_plotting_atm = cell2mat(thing_plotting_atm);
-                end
-                if iscell(rake_plotting_atm)
-                    rake_plotting_atm = cell2mat(rake_plotting_atm);
-                end
-                
-
-                %std_scaling = (1./visual_std)./(max(1./patch_std));     
-                %std_scaling(visual_std>visual_slip_mean) = 0.01;          % set any slip patches to zero if std of a patch is greater than the slip value
-                std_scaling = ones(total_n_down_dip_patches, total_n_along_strike_patches);
-
-                % plot mode and std
-                figure('position', [100, 300, 600, 800])
-                subplot(2,1,1)
-                h = eval(visual_thing_plotting_atm);
-                h = reshape( flipud(h(order)), total_n_down_dip_patches,[]);
-                %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);
-                imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],h, 'AlphaData', std_scaling);
-                %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);
-                axis equal tight
-                hot2 = hot;
-                hot2(1:8,:) = [];   % making the top colour red, not v dark red
-                hot2 = [hot2; ones(5,3)];  % adding more white to the bottom
-                colorbar
-                colormap(hot2)
-                colormap(flipud(colormap))
-                %xlabel('Along Strike'); 
-                ylabel('Down dip'); ylabel(colorbar, 'Slip (m)');
-                title(thing_plotting_atm)
-                %str = ['WRMS = ', num2str(WRMS_mode)];
-                %text(-2, -2, str);
-
-                
-                    if strcmp(invert.variable_rake, 'yes') == 1;
-                        [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( eval(rake_plotting_atm), eval(thing_plotting_atm), spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
-                    elseif strcmp(invert.variable_rake, 'no') == 1;
-                        [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), eval(thing_plotting_atm), spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
-                    end
-                    subplot(2,1,1); hold on;
-                    %quiver(x,y,u_arrow,v_arrow, scaling_factor, 'k');
-
-                ax2 = subplot(2,1,2);
-                imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],reshape( flipud(visual_std(order)), total_n_down_dip_patches,[]))
-                axis equal tight
-                colorbar
-                colormap( ax2,'jet')
-                xlabel('Along Strike (km)'); %ylabel('Down dip'); 
-                ylabel(colorbar, 'std (m)');
-                title('Standard deviation')
-                
-                clear thing_plotting_atm;
-                clear visual_thing_plotting_atm;
-                clear rake_plotting_atm;
-                
-            
-        end
-                
-
-end
-
-end
+% 
+% if strcmp(display.plotmean, 'yes') + strcmp(display.plotmode, 'yes') + strcmp(display.plotmedian, 'yes') ~=0
+% 
+%     scaling_factor = 0.5;
+% 
+%     if strcmp(variable_patches_along_strike_with_depth, 'no') == 1;         % can't plot using imagesc if there are a different number of patches along strike
+% 
+% 
+%                 order = flipud(spatial_model1);
+%                 order = reshape(order, 1, []);
+%                 order = order';
+% 
+% 
+%             things_to_get_around_to_plotting = {};
+%             visual_things_to_get_around_to_plotting = {};
+%             rake_to_get_around_to_plotting ={};
+%             if strcmp(display.plotmean, 'yes') == 1;
+%                  things_to_get_around_to_plotting = {'patch_mean'};
+%                  visual_things_to_get_around_to_plotting = {'visual_slip_mean'};
+%                  rake_to_get_around_to_plotting = {'rake_mean'};
+%             end
+%             if strcmp(display.plotmode, 'yes') == 1;
+%                 things_to_get_around_to_plotting{end+1,1} = {'patch_mode'};
+%                 visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_slip_mode'};
+%                 rake_to_get_around_to_plotting{end+1,1} = {'rake_mode'};
+%             end
+%             if strcmp(display.plotmedian, 'yes') == 1;
+%                 things_to_get_around_to_plotting{end+1,1} = {'patch_median'};
+%                 visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_slip_median'};
+%                 rake_to_get_around_to_plotting{end+1,1} = { 'rake_median'};
+%             end
+%             if strcmp(display.plotMAP, 'yes') == 1;
+%                 things_to_get_around_to_plotting{end+1,1} = {'patch_MAP'};
+%                 visual_things_to_get_around_to_plotting{end+1,1}  = {'visual_patch_MAP'};
+%                 rake_to_get_around_to_plotting{end+1,1} = {'rake_mostlikely'};
+%             end        
+% 
+% 
+%             for i = 1: size(visual_things_to_get_around_to_plotting,1)     % loop through all the things we're plotting
+% 
+%                     thing_plotting_atm = things_to_get_around_to_plotting{i};
+%                     visual_thing_plotting_atm = visual_things_to_get_around_to_plotting{i};
+%                     rake_plotting_atm = rake_to_get_around_to_plotting{i};
+% 
+%                     if iscell(visual_thing_plotting_atm)
+%                         visual_thing_plotting_atm = cell2mat(visual_thing_plotting_atm);
+%                     end
+%                     if iscell(thing_plotting_atm)
+%                         thing_plotting_atm = cell2mat(thing_plotting_atm);
+%                     end
+%                     if iscell(rake_plotting_atm)
+%                         rake_plotting_atm = cell2mat(rake_plotting_atm);
+%                     end
+% 
+% 
+%                     %std_scaling = (1./visual_std)./(max(1./patch_std));     
+%                     %std_scaling(visual_std>visual_slip_mean) = 0.01;          % set any slip patches to zero if std of a patch is greater than the slip value
+%                     std_scaling = ones(total_n_down_dip_patches, total_n_along_strike_patches);
+% 
+%                     % plot mode and std
+%                     figure('position', [100, 300, 600, 800])
+%                     subplot(2,1,1)
+%                     h = eval(visual_thing_plotting_atm);
+%                     h = reshape( flipud(h(order)), total_n_down_dip_patches,[]);
+%                     %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);
+%     %                 imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],h, 'AlphaData', std_scaling);
+%                     %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);
+%                     axis equal tight
+%                     hot2 = hot;
+%                     hot2(1:8,:) = [];   % making the top colour red, not v dark red
+%                     hot2 = [hot2; ones(5,3)];  % adding more white to the bottom
+%                     colorbar
+%                     colormap(hot2)
+%                     colormap(flipud(colormap))
+%                     %xlabel('Along Strike'); 
+%                     ylabel('Down dip'); ylabel(colorbar, 'Slip (m)');
+%                     title(thing_plotting_atm)
+%                     %str = ['WRMS = ', num2str(WRMS_mode)];
+%                     %text(-2, -2, str);
+% 
+% 
+%                         if strcmp(invert.variable_rake, 'yes') == 1;
+%                             [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( eval(rake_plotting_atm), eval(thing_plotting_atm), spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
+%                         elseif strcmp(invert.variable_rake, 'no') == 1;
+%                             [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), eval(thing_plotting_atm), spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
+%                         end
+%                         subplot(2,1,1); hold on;
+%                         %quiver(x,y,u_arrow,v_arrow, scaling_factor, 'k');
+% 
+%                     ax2 = subplot(2,1,2);
+%     %                 imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],reshape( flipud(visual_std(order)), total_n_down_dip_patches,[]))
+%                     axis equal tight
+%                     colorbar
+%                     colormap( ax2,'jet')
+%                     xlabel('Along Strike (km)'); %ylabel('Down dip'); 
+%                     ylabel(colorbar, 'std (m)');
+%                     title('Standard deviation')
+% 
+%                     clear thing_plotting_atm;
+%                     clear visual_thing_plotting_atm;
+%                     clear rake_plotting_atm;
+% 
+% 
+%             end
+% 
+% 
+%     end
+% 
+% end
 
 %% Compare all slips
-
-
-if strcmp(display.plotallslips, 'yes') == 1
-
-    %colormap('hot')
-    
-    scaling_factor = 0.35;
-    
-            order = flipud(spatial_model1);
-            %order = fliplr(order);
-            order = reshape(order, 1, []);
-            order = order';
-            
-            %order2=order;
-            order2=order;
-            order2 = flipud(order2);
-            order2 = reshape(order2, 1, []);
-           
-    
-    % first compare slip distributions ****************************************
-        figure('position', [300, 300, 1600, 1000])
-
-        if strcmp(testing.testing_mode, 'yes') == 1
-            load(testing.making_model, 'synthetic_slip');
-            if size(synthetic_slip,2) > size(synthetic_slip,1) ==1
-                synthetic_slip = synthetic_slip';
-            end
-            cmaxvalue = max([patch_mean; patch_mode; patch_median; patch_MAP; synthetic_slip]);
-        else
-            cmaxvalue = max([patch_mean; patch_mode; patch_median; patch_MAP]);
-            %cmaxvalue = max([patch_mean; patch_mode; patch_median]);
-        end
-        
-        if strcmp(testing.testing_mode, 'yes') == 1
-            % actual slip distribution, only use if testing
-            load(testing.making_model, 'visual_slip', 'synthetic_slip')
-            subplot(3,1,1);
-            %imagesc([0, sum(fault_length)/1000],[0, (fault_width(1))/1000],visual_slip); hold on;
-            %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_slip);
-            imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_slip);
-            %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip); hold on;
-            hold on;
-            axis equal tight; colorbar;
-            ylim([0, (fault_width(1))/1000])
-            xlim([0, sum(fault_length)/1000])
-            
-            true_model = load(testing.making_model, 'synthetic_disloc_model');
-            rake_true = true_model.synthetic_disloc_model(5,:); 
-            spatial_model2_for_true = spatial_model2;
-            n_down_dip_patches_for_plotting = total_n_down_dip_patches;
-            n_along_strike_patches_for_plotting = total_n_along_strike_patches;  
-            n_down_dip_patches_for_true = total_n_down_dip_patches(1);
-            n_along_strike_patches_for_true = sum(n_along_strike_patches);
-            %[ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_true, synthetic_slip, spatial_model2_for_true, n_down_dip_patches_for_true, n_along_strike_patches_for_true, true_model.synthetic_disloc_model );
-            true5 =load(testing.making_model, 'total_n_along_strike_patches'); 
-            true6 =load(testing.making_model, 'total_n_down_dip_patches'); 
-            true7 =load(testing.making_model, 'spatial_model3'); 
-            [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_true, synthetic_slip, true1.spatial_model2, true7.spatial_model3, true6.total_n_down_dip_patches, true5.total_n_along_strike_patches, true_model.synthetic_disloc_model );
-            quiver(x,y,u_arrow,v_arrow, scaling_factor, 'k');            
-    
-            xlabel('along strike')
-            ylabel('down dip')
-            title('Actual solution')          
-            %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);
-            caxis([0, cmaxvalue]);
-                    %caxis([0, 25]);
-        end 
-        
-
-
-        % mean
-        if strcmp(testing.testing_mode, 'yes') == 1
-            subplot(3,2,3)
-        else
-            subplot(2,2,1)
-        end
-        %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mean); hold on;
-        imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_mean(order)), total_n_down_dip_patches,[]) );
-        hold on; 
-        %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mean);hold on;
-        axis equal tight
-        colorbar          
-            if strcmp(invert.variable_rake, 'yes') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mean, patch_mean, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
-            elseif strcmp(invert.variable_rake, 'no') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_mean, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
-            end
-            quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
-                     
-        %xlabel('Along Strike (km)'); 
-        ylabel('Down dip (km)'); %ylabel(colorbar, 'Slip (m)');
-        title('Imaginary EQ slip, with VK constraint')
-        title('Mean')
-        %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);   
-        %caxis([0, max([patch_mean; patch_mode; patch_median])]);
-        caxis([0, cmaxvalue]);
-                %caxis([0, 25]);
-        %str = ['WRMS = ', num2str(WRMS_mean)];
-        %text(-2, -2, str);
-
-        % mode
-        if strcmp(testing.testing_mode, 'yes') == 1
-           subplot(3,2,4)
-        else
-            subplot(2,2,2)
-        end
-        %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode); hold on;
-        imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_mode(order)), total_n_down_dip_patches,[]));
-        hold on; 
-        %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);hold on;
-        axis equal tight
-        colorbar
-            if strcmp(invert.variable_rake, 'yes') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mode, patch_mode, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
-            elseif strcmp(invert.variable_rake, 'no') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_mode, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
-            end
-            quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
-        %xlabel('Along Strike'); ylabel('Down dip'); 
-        ylabel(colorbar, 'Slip (m)');
-        title('Imaginary EQ slip, with VK constraint')
-        title('Mode')
-        %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]); 
-        %caxis([0, max([patch_mean; patch_mode; patch_median])]);
-        caxis([0, cmaxvalue]);
-                %caxis([0, 25]);
-        %str = ['WRMS = ', num2str(WRMS_mode)];
-        %text(-2, -2, str);
-
-        % median
-        if strcmp(testing.testing_mode, 'yes') == 1
-           subplot(3,2,5)
-        else
-            subplot(2,2,3)
-        end
-        %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_median); hold on;
-        imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_median(order)), total_n_down_dip_patches,[]));
-        hold on; 
-        %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_median);hold on;       
-        axis equal tight
-        colorbar
-            if strcmp(invert.variable_rake, 'yes') == 1
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_median, patch_median, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches,disloc_model );
-            elseif strcmp(invert.variable_rake, 'no') == 1
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_median, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
-            end
-            quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
-        %xlabel('Along Strike'); ylabel('Down dip'); 
-        ylabel(colorbar, 'Slip (m)');
-        title('Imaginary EQ slip, with VK constraint')
-        title('Median')
-        %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);
-        %caxis([0, max([patch_mean; patch_mode; patch_median])])
-        caxis([0, cmaxvalue]);
-                %caxis([0, 25]);
-        %str = ['WRMS = ', num2str(WRMS_median)];
-        %text(-2, -2, str);
-        
-        % MAP
-        if strcmp(testing.testing_mode, 'yes') == 1
-           subplot(3,2,6)
-        else
-            subplot(2,2,4)
-        end
-        %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_patch_MAP); hold on;
-        imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_MAP(order)), total_n_down_dip_patches,[]));
-        %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_patch_MAP);
-        hold on; 
-        %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_patch_mostlikely);       
-        axis equal tight
-        colorbar
-            if strcmp(invert.variable_rake, 'yes') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mostlikely, patch_MAP, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model);
-            elseif strcmp(invert.variable_rake, 'no') == 1;
-                [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_MAP, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, testing, disloc_model );   
-            end
-            quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
-        xlabel('Along Strike'); %ylabel('Down dip'); 
-        ylabel(colorbar, 'Slip (m)');
-        title('Imaginary EQ slip, with VK constraint')
-        title('MAP')
-        %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]); 
-        %caxis([0, max([patch_mean; patch_mode; patch_median])]);
-        caxis([0, cmaxvalue]);
-        %caxis([0, 25]); 
-        %str = ['WRMS = ', num2str(WRMS_mostlikely)];
-        %text(-2, -2, str);
-        
-        %colormap('hot')
-        %colormap(flipud(colormap))
+% 
+% 
+% if strcmp(display.plotallslips, 'yes') == 1
+% 
+%     %colormap('hot')
+%     
+%     scaling_factor = 0.35;
+%     
+%             order = flipud(spatial_model1);
+%             %order = fliplr(order);
+%             order = reshape(order, 1, []);
+%             order = order';
+%             
+%             %order2=order;
+%             order2=order;
+%             order2 = flipud(order2);
+%             order2 = reshape(order2, 1, []);
+%            
+%     
+%     % first compare slip distributions ****************************************
+%         figure('position', [300, 300, 1600, 1000])
+% 
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%             load(testing.making_model, 'synthetic_slip');
+%             if size(synthetic_slip,2) > size(synthetic_slip,1) ==1
+%                 synthetic_slip = synthetic_slip';
+%             end
+%             cmaxvalue = max([patch_mean; patch_mode; patch_median; patch_MAP; synthetic_slip]);
+%         else
+%             cmaxvalue = max([patch_mean; patch_mode; patch_median; patch_MAP]);
+%             %cmaxvalue = max([patch_mean; patch_mode; patch_median]);
+%         end
+%         
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%             % actual slip distribution, only use if testing
+%             load(testing.making_model, 'visual_slip', 'synthetic_slip')
+%             subplot(3,1,1);
+%             %imagesc([0, sum(fault_length)/1000],[0, (fault_width(1))/1000],visual_slip); hold on;
+%             %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_slip);
+% %             imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_slip);
+%             %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip); hold on;
+%             hold on;
+%             axis equal tight; colorbar;
+%             ylim([0, (fault_width(1))/1000])
+%             xlim([0, sum(fault_length)/1000])
+%             
+%             true_model = load(testing.making_model, 'synthetic_disloc_model');
+%             rake_true = true_model.synthetic_disloc_model(5,:); 
+%             spatial_model2_for_true = spatial_model2;
+%             n_down_dip_patches_for_plotting = total_n_down_dip_patches;
+%             n_along_strike_patches_for_plotting = total_n_along_strike_patches;  
+%             n_down_dip_patches_for_true = total_n_down_dip_patches(1);
+%             n_along_strike_patches_for_true = sum(n_along_strike_patches);
+%             %[ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_true, synthetic_slip, spatial_model2_for_true, n_down_dip_patches_for_true, n_along_strike_patches_for_true, true_model.synthetic_disloc_model );
+%             true5 =load(testing.making_model, 'total_n_along_strike_patches'); 
+%             true6 =load(testing.making_model, 'total_n_down_dip_patches'); 
+%             true7 =load(testing.making_model, 'spatial_model3'); 
+%             [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_true, synthetic_slip, true1.spatial_model2, true7.spatial_model3, true6.total_n_down_dip_patches, true5.total_n_along_strike_patches, true_model.synthetic_disloc_model );
+%             quiver(x,y,u_arrow,v_arrow, scaling_factor, 'k');            
+%     
+%             xlabel('along strike')
+%             ylabel('down dip')
+%             title('Actual solution')          
+%             %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);
+%             caxis([0, cmaxvalue]);
+%                     %caxis([0, 25]);
+%         end 
+%         
+% 
+% 
+%         % mean
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%             subplot(3,2,3)
+%         else
+%             subplot(2,2,1)
+%         end
+%         %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mean); hold on;
+% %         imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_mean(order)), total_n_down_dip_patches,[]) );
+%         hold on; 
+%         %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mean);hold on;
+%         axis equal tight
+%         colorbar          
+%             if strcmp(invert.variable_rake, 'yes') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mean, patch_mean, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
+%             elseif strcmp(invert.variable_rake, 'no') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_mean, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
+%             end
+% %             quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
+%                      
+%         %xlabel('Along Strike (km)'); 
+%         ylabel('Down dip (km)'); %ylabel(colorbar, 'Slip (m)');
+%         title('Imaginary EQ slip, with VK constraint')
+%         title('Mean')
+%         %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);   
+%         %caxis([0, max([patch_mean; patch_mode; patch_median])]);
+%         caxis([0, cmaxvalue]);
+%                 %caxis([0, 25]);
+%         %str = ['WRMS = ', num2str(WRMS_mean)];
+%         %text(-2, -2, str);
+% 
+%         % mode
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%            subplot(3,2,4)
+%         else
+%             subplot(2,2,2)
+%         end
+%         %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode); hold on;
+% %         imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_mode(order)), total_n_down_dip_patches,[]));
+%         hold on; 
+%         %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_mode);hold on;
+%         axis equal tight
+%         colorbar
+%             if strcmp(invert.variable_rake, 'yes') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mode, patch_mode, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );
+%             elseif strcmp(invert.variable_rake, 'no') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_mode, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
+%             end
+% %             quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
+%         %xlabel('Along Strike'); ylabel('Down dip'); 
+%         ylabel(colorbar, 'Slip (m)');
+%         title('Imaginary EQ slip, with VK constraint')
+%         title('Mode')
+%         %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]); 
+%         %caxis([0, max([patch_mean; patch_mode; patch_median])]);
+%         caxis([0, cmaxvalue]);
+%                 %caxis([0, 25]);
+%         %str = ['WRMS = ', num2str(WRMS_mode)];
+%         %text(-2, -2, str);
+% 
+%         % median
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%            subplot(3,2,5)
+%         else
+%             subplot(2,2,3)
+%         end
+%         %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_median); hold on;
+% %         imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_median(order)), total_n_down_dip_patches,[]));
+%         hold on; 
+%         %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_slip_median);hold on;       
+%         axis equal tight
+%         colorbar
+%             if strcmp(invert.variable_rake, 'yes') == 1
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_median, patch_median, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches,disloc_model );
+%             elseif strcmp(invert.variable_rake, 'no') == 1
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_median, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model );   
+%             end
+% %             quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
+%         %xlabel('Along Strike'); ylabel('Down dip'); 
+%         ylabel(colorbar, 'Slip (m)');
+%         title('Imaginary EQ slip, with VK constraint')
+%         title('Median')
+%         %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]);
+%         %caxis([0, max([patch_mean; patch_mode; patch_median])])
+%         caxis([0, cmaxvalue]);
+%                 %caxis([0, 25]);
+%         %str = ['WRMS = ', num2str(WRMS_median)];
+%         %text(-2, -2, str);
+%         
+%         % MAP
+%         if strcmp(testing.testing_mode, 'yes') == 1
+%            subplot(3,2,6)
+%         else
+%             subplot(2,2,4)
+%         end
+%         %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_patch_MAP); hold on;
+% %         imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2], reshape( flipud(patch_MAP(order)), total_n_down_dip_patches,[]));
+%         %imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visual_patch_MAP);
+%         hold on; 
+%         %imagesc([spatial_model3(1)/1000/2, fault_length(1)/1000], [spatial_model3(1)/1000/2, (fault_width(1)-(spatial_model2(1)/2))/1000],visual_patch_mostlikely);       
+%         axis equal tight
+%         colorbar
+%             if strcmp(invert.variable_rake, 'yes') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( rake_mostlikely, patch_MAP, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, disloc_model);
+%             elseif strcmp(invert.variable_rake, 'no') == 1;
+%                 [ x,y,u_arrow,v_arrow ] = prepare_plot_rake( disloc_model(5,:), patch_MAP, spatial_model2, spatial_model3, total_n_down_dip_patches, total_n_along_strike_patches, testing, disloc_model );   
+%             end
+% %             quiver(x(order2),y(order2),u_arrow,v_arrow, scaling_factor, 'k');
+%         xlabel('Along Strike'); %ylabel('Down dip'); 
+%         ylabel(colorbar, 'Slip (m)');
+%         title('Imaginary EQ slip, with VK constraint')
+%         title('MAP')
+%         %caxis([0, max([patch_mean; patch_mode; patch_median; patch_MAP])]); 
+%         %caxis([0, max([patch_mean; patch_mode; patch_median])]);
+%         caxis([0, cmaxvalue]);
+%         %caxis([0, 25]); 
+%         %str = ['WRMS = ', num2str(WRMS_mostlikely)];
+%         %text(-2, -2, str);
+%         
+%         %colormap('hot')
+%         %colormap(flipud(colormap))
+% %         hot2 = hot;
+% %         hot2(1:8,:) = [];      % chopping off start of colorbar to get rid of black - i want the maximum colour to be dark red
+% %         colormap(hot2)
+% %         colormap(flipud(colormap))
 %         hot2 = hot;
-%         hot2(1:8,:) = [];      % chopping off start of colorbar to get rid of black - i want the maximum colour to be dark red
+%         hot2(1:5,:) = [];      % chopping off start of colorbar to get rid of black - i want the maximum colour to be dark red  
+%         hot2 = [hot2; ones(5,3)];  % adding more white to the bottom
 %         colormap(hot2)
 %         colormap(flipud(colormap))
-        hot2 = hot;
-        hot2(1:5,:) = [];      % chopping off start of colorbar to get rid of black - i want the maximum colour to be dark red  
-        hot2 = [hot2; ones(5,3)];  % adding more white to the bottom
-        colormap(hot2)
-        colormap(flipud(colormap))
-        
-end
-
-
+%         
+% end
 
 %% Probability with time
 
 if strcmp(display.plotprob, 'yes')
     % Have a look and see if you escaped the burn-in period
-    figure
+    figure('Name','Prob','NumberTitle','off')
+%    sgtitle(housekeeping.save_name)
     %posterior_total = sum(posterior_keep,1);                  % this sums the probability, if there are multiple strands, and if there's just one strand it does nothing
     plot( 1:length(logposterior_keep), logposterior_keep)
     %axis ij % If you'd like to flip the axis - maybe do this if you're taking the log of the probabilities
@@ -814,7 +811,7 @@ if strcmp(invert.solve_for_fault_size, 'yes') ==1
     onoffidentifyerkeeppercentage = sum(onlyonkeptpatches,2) / (store_number-burn_in_remove_number);
     visualonoffidentifyerkeep = reshape(onoffidentifyerkeeppercentage, total_n_down_dip_patches, n_along_strike_patches);
     figure('position', [600, 300, 800, 600])
-    imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visualonoffidentifyerkeep)
+%     imagesc([spatial_model3(1)/1000/2, (sum(fault_length)-(spatial_model2(1)/2))/1000], [spatial_model3(1)/1000/2, (fault_width(1)/1000/sin(deg2rad(disloc_model(4,1))))-spatial_model3(1)/1000/2],visualonoffidentifyerkeep)
     title('Patch on-off-edness (%)');
     h = colorbar;
     colormap(hot)
@@ -833,7 +830,6 @@ if strcmp(invert.solve_for_fault_size, 'yes') ==1
     
     
 end
-
 
 %% Plot histograms for some slip patches
 
@@ -870,7 +866,8 @@ if strcmp(display.plothists, 'plothistsample') == 1
         colormap default
         hist( slip_keep( random(i-1), :),nbins)
         hold on
-        y = [0 max(M)];
+        %y = [0 max(M)];
+        y= [0 12]
         x_mean = [patch_mean(random(i-1)) patch_mean(random(i-1))];
         x_mode = [patch_mode(random(i-1)) patch_mode(random(i-1))];
         x_median = [patch_median(i) patch_median(i)];
@@ -905,8 +902,6 @@ if strcmp(display.plothists, 'plothistsample') == 1
         
 end
 
-
-
 %% Surface displacment arrows
 % can only do this for testing, because for InSAR we only have LOS
 
@@ -931,14 +926,14 @@ end
             % true data
             displ_actual_E = u(1,:);
             displ_actual_N = u(2,:);
-            quiver( from_making_model.locs(1,:), from_making_model.locs(2,:), displ_actual_E* scale, displ_actual_N* scale, 'b', 'Autoscale', 'off');
+%             quiver( from_making_model.locs(1,:), from_making_model.locs(2,:), displ_actual_E* scale, displ_actual_N* scale, 'b', 'Autoscale', 'off');
             hold on;
 
 
             % model prediction       
             displ_pred_E = G_E*patch_MAP;         % d = Gm
             displ_pred_N = G_N*patch_MAP;
-            quiver( locs(1,1: length(displ_actual_E)), locs(2,1: length(displ_actual_E)), displ_pred_E' * scale, displ_pred_N' * scale, 'g', 'Autoscale', 'off');
+%             quiver( locs(1,1: length(displ_actual_E)), locs(2,1: length(displ_actual_E)), displ_pred_E' * scale, displ_pred_N' * scale, 'g', 'Autoscale', 'off');
             legend('Fault', 'Actual data', 'Model prediction', 'Location', 'northeastoutside');
             load(testing.making_model, 'faultx', 'faulty');
             plot( faultx/1000, faulty/1000, 'k');
@@ -961,7 +956,7 @@ end
                 hold on;
                 plot(x, y, 'm', 'Linewidth', 2)
             end
-            quiver( locs(1,1:length(resid_E)), locs(2,1:length(resid_N)), resid_E'* scale, resid_N'* scale, 'r', 'Autoscale', 'off')
+%             quiver( locs(1,1:length(resid_E)), locs(2,1:length(resid_N)), resid_E'* scale, resid_N'* scale, 'r', 'Autoscale', 'off')
             legend('Fault', 'Residuals', 'Location', 'northeastoutside');
             xlabel('x'); ylabel('y');
             hold on;
@@ -977,7 +972,9 @@ end
 
 if strcmp(display.plotsurfacedisp, 'yes') + strcmp(testing.testing_mode, 'no') == 2;
    
-    figure('position', [100, 350, 1800, 600])
+    figure('position', [100, 350, 1800, 600],...
+        'Name','Residual','NumberTitle','off')
+    residual_accumulator=0;
     counter=1;
     
     for p= 1: max([n_InSAR_scenes 1])
@@ -1101,7 +1098,9 @@ if strcmp(display.plotsurfacedisp, 'yes') + strcmp(testing.testing_mode, 'no') =
         % Third, plot residuals
         ax3 = subplot(max([n_InSAR_scenes 1]),3,counter);
         residuals = (d - d_hat);%.^2;        % the first half are InSAR residuals, if we have InSAR. The second half are GPS residuals, if we have GPS.
-
+        residual_accumulator = residual_accumulator + sum(residuals.^2);
+        disp('residual ='); disp(sum(residuals.^2))
+        
         if strcmp(data.InSAR_datafile, 'none') ~= 1     % if we have InSAR data, then the first (length(locs_InSAR)) entries of d are for InSAR
             scatter( locs_InSAR(1,InSAR_identifyer==p), locs_InSAR(2,InSAR_identifyer==p), [], residuals(InSAR_identifyer==p), 'filled');
             hold on;
@@ -1140,7 +1139,7 @@ if strcmp(display.plotsurfacedisp, 'yes') + strcmp(testing.testing_mode, 'no') =
                 x = [fault_coords(j,1), fault_coords(j,3)];
                 y = [fault_coords(j,2), fault_coords(j,4)];
                 hold on;
-                plot(x, y, 'm', 'Linewidth', 2)
+                plot(x, y, 'm', 'Linewidth', 1)
         end
 
         %xlabel('UTM x, I think')
@@ -1183,85 +1182,81 @@ if strcmp(display.plotsurfacedisp, 'yes') + strcmp(testing.testing_mode, 'no') =
 
 
 
-      end
+    end
 
-
+%    sgtitle(['res=',sprintf('%0.2f',residual_accumulator), housekeeping.save_name])
 end
 
-
-
-
-%% Plot histograms for all slip patches
-
-if strcmp( display.plothists, 'plothistsall') == 1
-    % Subplot numbers the plots along the rows. But I have numbered my
-    % patches down the columns. So I have to create a matrix re-numbering
-    % my slip patches in this way. So that:
-    %
-    %  Patch numbers:                  Subplot numbers:
-    %   1 3 5               becomes     1 2 3
-    %   2 4 6                           4 5 6
-    %
-    % So that patch 1 is subplot 1, but patch 2 is subplot 4, etc
-
-    A = 1: total_n_slip_patches;
-    A = reshape(A, total_n_along_strike_patches, total_n_down_dip_patches);
-    A = A';
-    A = fliplr(A);
-    plot_numbers = reshape(A, total_n_slip_patches, 1);
-
-    nbins = 20;
-    
-    % Plot the patches
-    figure('position', [100, 350, 1600, 1200])
-    for i = 1: total_n_slip_patches
-       subplot( total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers(i))
-       colormap default
-       %hist( slip_keep_just_real_patches(i,:), nbins)
-       %[counts, centers] = hist(slip_keep_just_real_patches(i,:), nbins);   
-       hist(slip_keep(i,onlyonkeptpatches(i,:)), nbins);
-       hold on
-       x_mean = [patch_mean(i) patch_mean(i)];
-       x_mode = [patch_mode(i) patch_mode(i)];
-       x_median = [patch_median(i) patch_median(i)];
-       %x_conf_lower = [patch_conf_intervals(i,1) patch_conf_intervals(i,1)];
-       %x_conf_higher = [patch_conf_intervals(i,2) patch_conf_intervals(i,2)];
-       plot(x_mean,y,'r');
-       plot(x_mode,y,'g');
-       plot(x_median,y,'k');
-       %plot(x_conf_lower, y, 'y');
-       %plot(x_conf_higher, y, 'y');
-           if strcmp(testing.testing_mode, 'yes')
-              load(testing.making_model, 'synthetic_slip');
-              if length(synthetic_slip) == total_n_slip_patches;
-                x_true = [synthetic_slip(i) synthetic_slip(i)]; % plot x_true as a line
-                plot(x_true, y, 'm');
-              end
-           end
-       set(gca,'YTick',[]);
-       set(gca,'Xticklabel',[])
-       %title(['Slip patch ', num2str(i)])
-       ylim([0 invert.iterations/3])
-       xlim([0 max(max(slip_keep))])
-    end
-  
-% Put x and y labels on middle-outside plots
-subplot(total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers(ceil(total_n_down_dip_patches/2)))
-ylabel('Frequency')
-subplot(total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers((ceil(n_along_strike_patches/2))*total_n_down_dip_patches))
-xlabel('Slip (m)')
-          
-
-    % Put a legend, but only on the histogram on the far right
-    subplot(total_n_down_dip_patches, total_n_along_strike_patches, total_n_along_strike_patches)
-    if strcmp(testing.testing_mode, 'yes')
-        legend('Sampling', 'Mean', 'Mode', 'Median','95%','95%','True');
-    else
-        legend('Sampling', 'Mean', 'Mode', 'Median','95%','95%');
-    end
-    legend('location', 'northeastoutside')
-end
-
+% %% Plot histograms for all slip patches
+% 
+% if strcmp( display.plothists, 'plothistsall') == 1
+%     % Subplot numbers the plots along the rows. But I have numbered my
+%     % patches down the columns. So I have to create a matrix re-numbering
+%     % my slip patches in this way. So that:
+%     %
+%     %  Patch numbers:                  Subplot numbers:
+%     %   1 3 5               becomes     1 2 3
+%     %   2 4 6                           4 5 6
+%     %
+%     % So that patch 1 is subplot 1, but patch 2 is subplot 4, etc
+% 
+%     A = 1: total_n_slip_patches;
+%     A = reshape(A, total_n_along_strike_patches, total_n_down_dip_patches);
+%     A = A';
+%     A = fliplr(A);
+%     plot_numbers = reshape(A, total_n_slip_patches, 1);
+% 
+%     nbins = 20;
+%     
+%     % Plot the patches
+%     figure('position', [100, 350, 1600, 1200])
+%     for i = 1: total_n_slip_patches
+%        subplot( total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers(i))
+%        colormap default
+%        %hist( slip_keep_just_real_patches(i,:), nbins)
+%        %[counts, centers] = hist(slip_keep_just_real_patches(i,:), nbins);   
+%        hist(slip_keep(i,onlyonkeptpatches(i,:)), nbins);
+%        hold on
+%        x_mean = [patch_mean(i) patch_mean(i)];
+%        x_mode = [patch_mode(i) patch_mode(i)];
+%        x_median = [patch_median(i) patch_median(i)];
+%        %x_conf_lower = [patch_conf_intervals(i,1) patch_conf_intervals(i,1)];
+%        %x_conf_higher = [patch_conf_intervals(i,2) patch_conf_intervals(i,2)];
+%        plot(x_mean,y,'r');
+%        plot(x_mode,y,'g');
+%        plot(x_median,y,'k');
+%        %plot(x_conf_lower, y, 'y');
+%        %plot(x_conf_higher, y, 'y');
+%            if strcmp(testing.testing_mode, 'yes')
+%               load(testing.making_model, 'synthetic_slip');
+%               if length(synthetic_slip) == total_n_slip_patches;
+%                 x_true = [synthetic_slip(i) synthetic_slip(i)]; % plot x_true as a line
+%                 plot(x_true, y, 'm');
+%               end
+%            end
+%        set(gca,'YTick',[]);
+%        set(gca,'Xticklabel',[])
+%        %title(['Slip patch ', num2str(i)])
+%        ylim([0 invert.iterations/3])
+%        xlim([0 max(max(slip_keep))])
+%     end
+%   
+% % Put x and y labels on middle-outside plots
+% subplot(total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers(ceil(total_n_down_dip_patches/2)))
+% ylabel('Frequency')
+% subplot(total_n_down_dip_patches, total_n_along_strike_patches, plot_numbers((ceil(n_along_strike_patches/2))*total_n_down_dip_patches))
+% xlabel('Slip (m)')
+%           
+% 
+%     % Put a legend, but only on the histogram on the far right
+%     subplot(total_n_down_dip_patches, total_n_along_strike_patches, total_n_along_strike_patches)
+%     if strcmp(testing.testing_mode, 'yes')
+%         legend('Sampling', 'Mean', 'Mode', 'Median','95%','95%','True');
+%     else
+%         legend('Sampling', 'Mean', 'Mode', 'Median','95%','95%');
+%     end
+%     legend('location', 'northeastoutside')
+% end
 
 %% Plot pdfs of correlation lengths, if necessary
 
@@ -1279,7 +1274,6 @@ if strcmp(invert.smoothing, 'VK') ==1 && strcmp(invert.solve_for_correlation_len
     xlabel('value')
     
 end
-
 
 %% Plot pdfs of dips, if necessary
 
@@ -1353,7 +1347,9 @@ end
 
 if strcmp(display.plot3d, 'yes') == 1
 
-    h=figure('position', [200, 300, 1600, 1000]);
+    h=figure('position', [200, 300, 1600, 1000],...
+        'Name','3D','NumberTitle','off');
+
     set(gca,'fontsize',30)
     
     % PROBLEM: gareth funning's doplot3d needs utmx utmy to calculate
@@ -1375,16 +1371,19 @@ if strcmp(display.plot3d, 'yes') == 1
         end
     
     faults(5,:) = rake_mostlikely;
-    faults(6,:) = patch_mean;
-    %faults(6,:) = patch_std;
+    faults(6,:) = patch_MAP;  %
+%     faults(6,:) = step_sizes(1:121);
+%     faults(6,:) = step_sizes_keep(1:121, 24);
+%    faults(6,:) = patch_std;
     doplot3d(faults', 'hot');
     %doplot3d_ruthhack_utm2ll(faults', 'jet', data.UTMzone*ones(total_n_slip_patches,1))
     hold on;
     colorbar
     %caxis([0, cmaxvalue]);
     caxis([0, max(faults(6,:))]);
-    caxis([0, 3]);
-    title('3D mean')
+    caxis([0, 10]);
+%     caxis([0, 0.1]);
+%     sgtitle(['res=',sprintf('%0.2f',residual_accumulator),housekeeping.save_name])
     xlabel('UTM x')
     ylabel('UTM y')
     zlabel('Depth (km)')
@@ -1408,21 +1407,21 @@ if strcmp(display.plot3d, 'yes') == 1
     [xquivmag,yquivmag,zquivmag] = reproject_quiv(quiv_mags,disloc_model(3,:)',disloc_model(4,:)');   % nicked from Tom.   reproject_quiv(ss_mag, ds_mag, strike, dip)
     %[xquivmag,yquivmag,zquivmag] = pol2cart(disloc_model(3,:)',rake_mode,patch_mode);
     scale_factor = 0.7;
-    
-    % work out where to plot rake points
-    dip = disloc_model(4,1);
-    extrawidth = abs(cosd(dip) * (disloc_model(8,:)+disloc_model(9,:))'/(-2*sind(disloc_model(4,1))))';
-    x_extra = abs(extrawidth * cosd(strike));
-    y_extra = abs(extrawidth * sind(strike));
-    hold on;
-    if strike > 90 && strike <= 180 || strike > 180 && strike <= 270
-         x_extra = -x_extra;
-    end
-    if strike >= 0 && strike <= 90 || strike > 90 && strike <= 180
-        y_extra = -y_extra;
-    end
-    %quiver3(   (disloc_model(1,:)'+ x_extra )/1000,     (disloc_model(2,:)'- y_extra)/1000 ,    (disloc_model(8,:)+disloc_model(9,:))'/(-2*sind(disloc_model(4,1)))/1000    ,xquivmag*scale_factor, yquivmag*scale_factor, zquivmag*scale_factor, 'k', 'Linewidth', 1.5, 'Autoscale', 'off');
-    quiver3(   (disloc_model(1,:) + x_extra )/1000,     (disloc_model(2,:) + y_extra)/1000 ,    -((disloc_model(9,:)-disloc_model(8,:))/2 + disloc_model(8,:))/1000,       xquivmag'*scale_factor,      yquivmag'*scale_factor,       zquivmag'*scale_factor, 'k', 'Linewidth', 1.5, 'Autoscale', 'off');
+%     
+%     % work out where to plot rake points
+%     dip = disloc_model(4,1);
+%     extrawidth = abs(cosd(dip) * (disloc_model(8,:)+disloc_model(9,:))'/(-2*sind(disloc_model(4,1))))';
+%     x_extra = abs(extrawidth * cosd(strike));
+%     y_extra = abs(extrawidth * sind(strike));
+%     hold on;
+%     if strike > 90 && strike <= 180 || strike > 180 && strike <= 270
+%          x_extra = -x_extra;
+%     end
+%     if strike >= 0 && strike <= 90 || strike > 90 && strike <= 180
+%         y_extra = -y_extra;
+%     end
+%     %quiver3(   (disloc_model(1,:)'+ x_extra )/1000,     (disloc_model(2,:)'- y_extra)/1000 ,    (disloc_model(8,:)+disloc_model(9,:))'/(-2*sind(disloc_model(4,1)))/1000    ,xquivmag*scale_factor, yquivmag*scale_factor, zquivmag*scale_factor, 'k', 'Linewidth', 1.5, 'Autoscale', 'off');
+% %     quiver3(   (disloc_model(1,:) + x_extra )/1000,     (disloc_model(2,:) + y_extra)/1000 ,    -((disloc_model(9,:)-disloc_model(8,:))/2 + disloc_model(8,:))/1000,       xquivmag'*scale_factor,      yquivmag'*scale_factor,       zquivmag'*scale_factor, 'k', 'Linewidth', 1.5, 'Autoscale', 'off');
    
 end
 
@@ -1466,7 +1465,10 @@ if strcmp(display.plotmarginalPDFs, 'yes') == 1
     end
     
     
-    figure('position', [100, 300, 1600, 1200])
+    figure('position', [100, 300, 1600, 1200],...
+        'Name','MarginalPdfs','NumberTitle','off')
+%    sgtitle(['res=',sprintf('%0.2f',residual_accumulator), housekeeping.save_name])
+
     if strcmp(testing.testing_mode, 'yes') == 1
         [H,AX,BigAx,P,PAx,cc_colorbar] = plotmatrix_lower2(slip_for_marginal_PDF_plotting,'plot_color', true_slip_for_marginal_PDF_plotting);
     else
@@ -1508,15 +1510,15 @@ if strcmp(display.plotmarginalPDFs, 'yes') == 1
 end
 
 
-%%  Plot parameters through time
+%  Plot parameters through time
 
 
-% if strcmp(invert.inversion_type, 'bayesian') == 1
-% 
-%     % Slip
+if strcmp(invert.inversion_type, 'bayesian') == 1
+
+    % Slip
 %     figure('position', [200, 300, 1600, 1200])
 %     for i = 1: total_n_slip_patches
-%        subplot(total_n_down_dip_patches,total_n_along_strike_patches,plot_numbers(i))
+%        % subplot(total_n_down_dip_patches,total_n_along_strike_patches,plot_numbers(i))
 %        plot(1:length(slip_keep), slip_keep(i,:));
 %        ylim([priors.min_slip(1),max(max(slip_keep))])
 %     end
@@ -1524,25 +1526,25 @@ end
 %     subplot(total_n_down_dip_patches,total_n_along_strike_patches,1)
 %     ylabel('Slip')
 %     title('Slip trace plot')
-% 
-%     if strcmp(invert.smoothing, 'none') ~= 1
-%         % Alpha
-%         figure('position', [200, 300, 800, 1200])
-%         for i = 1: n_fault_strands_for_smoothing
-%            subplot(n_fault_strands_for_smoothing,1,i)
-%            plot(1:length(alpha2_keep), alpha2_keep(i,:));
-%            ylim([priors.min_alpha2(i),max(alpha2_keep(i,:))])
-%         end
-%         xlabel('Iterations')
-%         subplot(n_fault_strands_for_smoothing,1,1);
-%         ylabel('Alpha')
-%         title('Alpha trace plot')
-%     end
-% 
+
+    if strcmp(invert.smoothing, 'none') ~= 1
+        % Alpha
+        figure('position', [200, 300, 800, 1200])
+        for i = 1: n_fault_strands_for_smoothing
+           subplot(n_fault_strands_for_smoothing,1,i)
+           plot(1:length(alpha2_keep), alpha2_keep(i,:));
+           ylim([priors.min_alpha2(i),max(alpha2_keep(i,:))])
+        end
+        xlabel('Iterations')
+        subplot(n_fault_strands_for_smoothing,1,1);
+        ylabel('Alpha')
+        title('Alpha trace plot')
+    end
+
 %     % Rake
 %     figure('position', [200, 300, 1600, 1200])
 %     for i = 1: total_n_slip_patches
-%        subplot(total_n_down_dip_patches,total_n_along_strike_patches,plot_numbers(i))
+%        % subplot(total_n_down_dip_patches,total_n_along_strike_patches,plot_numbers(i))
 %        plot(1:length(rake_keep), rake_keep(i,:));
 %        ylim([priors.min_rake(1),priors.max_rake(1)])
 %     end
@@ -1552,10 +1554,10 @@ end
 %     title('Rake trace plot')
 % 
 %     % Circharm parameters
-% 
-% end
 
-%% Offset
+end
+
+% Offset
 
 if strcmp(invert.solve_for_InSAR_offset, 'yes') == 1
    
@@ -1662,5 +1664,41 @@ if strcmp(invert.ensemble_sampling, 'yes') == 1
        ylabel('i')
    end
 
+end
+%% plot the resolutions
+    if strcmp(display.plot_resolution_matrix, 'no') == 1
+        GT = G';
+        Gg = inv(GT * inv_sigma_d * G + inv_sigma_s) * GT * inv_sigma_d;
+        resolution_matrices = Gg * G;
+%         figure
+%         imagesc(resolution_matrices)
+%         colorbar
+%         caxis([0 1])
+%         title('Resolution matrix')
+
+        patch_resolution = diag(resolution_matrices);
+
+        faults = disloc_model;
+        faults(6,:) = patch_resolution;
+        figure
+        doplot3d(faults', 'hot')
+        title('Resolution')
+        hold on;
+        colorbar
+        caxis([0, 1]);
+        hot2 = hot;
+        hot2(1:40,:) = [];      % chopping off start of colorbar to get rid of black - i want the maximum colour to be dark red  
+        hot2 = [hot2; ones(30,3)];  % adding more white to the bottom
+        colormap(hot2)
+        colormap(flipud(colormap))
+        end
+
+%% Save all figures
+FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
+for iFig = 1:length(FigList)
+  FigHandle = FigList(iFig);
+  FigName   = get(FigHandle, 'Name');
+%   savefig(FigHandle, fullfile(FolderName, FigName, '.fig'));
+  saveas(FigHandle, [FigName,sprintf('_%0.2f',residual_accumulator), housekeeping.save_name,'.png']);
 end
 
